@@ -287,7 +287,8 @@ int main() {
                                                    options:MTLResourceStorageModeShared];
 
     int pixel_count = image_width * image_height;
-    id<MTLBuffer> outputBuffer = [device newBufferWithLength:sizeof(float) * 3 * pixel_count
+    // Allocate for float3 structures (12 bytes each on most platforms, but use sizeof to be safe)
+    id<MTLBuffer> outputBuffer = [device newBufferWithLength:sizeof(float) * 4 * pixel_count
                                                      options:MTLResourceStorageModeShared];
 
     // Execute on GPU
@@ -319,19 +320,21 @@ int main() {
     std::cerr << "GPU rendering complete!\n\n";
 
     // Read results and output PPM
-    float* output = (float*)[outputBuffer contents];
+    // Metal writes float3 structures, so cast to float3* (which is a vector_float3 in Metal)
+    typedef struct { float x, y, z; } float3_cpu;
+    float3_cpu* output = (float3_cpu*)[outputBuffer contents];
 
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
     for (int j = 0; j < image_height; j++) {
         std::cerr << "\rWriting scanline: " << j << " / " << image_height << std::flush;
         for (int i = 0; i < image_width; i++) {
-            int idx = (j * image_width + i) * 3;
+            int idx = j * image_width + i;
 
             // Gamma correction
-            float r = sqrt(output[idx + 0]);
-            float g = sqrt(output[idx + 1]);
-            float b = sqrt(output[idx + 2]);
+            float r = sqrt(output[idx].x);
+            float g = sqrt(output[idx].y);
+            float b = sqrt(output[idx].z);
 
             // Clamp
             r = (r < 0.0f) ? 0.0f : (r > 0.999f) ? 0.999f : r;
