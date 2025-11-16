@@ -136,7 +136,7 @@ Vec3 random_unit_vector(thread uint& seed) {
                       random_float_range(-1, 1, seed),
                       random_float_range(-1, 1, seed));
         float lensq = p.length_squared();
-        if (1e-160 < lensq && lensq <= 1.0f)
+        if (1e-30f < lensq && lensq <= 1.0f)
             return p / sqrt(lensq);
     }
 }
