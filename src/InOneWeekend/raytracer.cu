@@ -11,67 +11,67 @@
 struct Vec3 {
     float x, y, z;
 
-    __device__ Vec3() : x(0), y(0), z(0) {}
-    __device__ Vec3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
+    __host__ __device__ Vec3() : x(0), y(0), z(0) {}
+    __host__ __device__ Vec3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
 
-    __device__ float length_squared() const {
+    __host__ __device__ float length_squared() const {
         return x*x + y*y + z*z;
     }
 
-    __device__ float length() const {
+    __host__ __device__ float length() const {
         return sqrtf(length_squared());
     }
 };
 
 // Vec3 operators
-__device__ Vec3 operator+(const Vec3& a, const Vec3& b) {
+__host__ __device__ Vec3 operator+(const Vec3& a, const Vec3& b) {
     return Vec3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-__device__ Vec3 operator-(const Vec3& a, const Vec3& b) {
+__host__ __device__ Vec3 operator-(const Vec3& a, const Vec3& b) {
     return Vec3(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-__device__ Vec3 operator*(const Vec3& a, const Vec3& b) {
+__host__ __device__ Vec3 operator*(const Vec3& a, const Vec3& b) {
     return Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
 }
 
-__device__ Vec3 operator*(float t, const Vec3& v) {
+__host__ __device__ Vec3 operator*(float t, const Vec3& v) {
     return Vec3(t * v.x, t * v.y, t * v.z);
 }
 
-__device__ Vec3 operator*(const Vec3& v, float t) {
+__host__ __device__ Vec3 operator*(const Vec3& v, float t) {
     return t * v;
 }
 
-__device__ Vec3 operator/(const Vec3& v, float t) {
+__host__ __device__ Vec3 operator/(const Vec3& v, float t) {
     return (1.0f / t) * v;
 }
 
-__device__ Vec3 operator-(const Vec3& v) {
+__host__ __device__ Vec3 operator-(const Vec3& v) {
     return Vec3(-v.x, -v.y, -v.z);
 }
 
-__device__ float dot(const Vec3& a, const Vec3& b) {
+__host__ __device__ float dot(const Vec3& a, const Vec3& b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-__device__ Vec3 unit_vector(const Vec3& v) {
+__host__ __device__ Vec3 unit_vector(const Vec3& v) {
     return v / v.length();
 }
 
-__device__ Vec3 reflect(const Vec3& v, const Vec3& n) {
+__host__ __device__ Vec3 reflect(const Vec3& v, const Vec3& n) {
     return v - 2.0f * dot(v, n) * n;
 }
 
-__device__ Vec3 refract(const Vec3& uv, const Vec3& n, float etai_over_etat) {
+__host__ __device__ Vec3 refract(const Vec3& uv, const Vec3& n, float etai_over_etat) {
     float cos_theta = fminf(dot(-uv, n), 1.0f);
     Vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
     Vec3 r_out_parallel = -sqrtf(fabsf(1.0f - r_out_perp.length_squared())) * n;
     return r_out_perp + r_out_parallel;
 }
 
-__device__ bool near_zero(const Vec3& v) {
+__host__ __device__ bool near_zero(const Vec3& v) {
     const float s = 1e-8f;
     return (fabsf(v.x) < s) && (fabsf(v.y) < s) && (fabsf(v.z) < s);
 }
