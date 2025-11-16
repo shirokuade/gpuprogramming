@@ -18,7 +18,7 @@ xcrun -sdk macosx metallib raytracer.air -o raytracer.metallib
 
 # Compile the full application with Objective-C++
 echo "Compiling application..."
-clang++ -std=c++11 \
+clang++ -std=c++17 \
     -O3 \
     -march=native \
     main_metal.cc \

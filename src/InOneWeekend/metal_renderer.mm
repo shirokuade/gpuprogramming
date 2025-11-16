@@ -5,8 +5,16 @@
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <memory>
+#include <algorithm>
+
+// Undefine deprecated macOS pi constant to avoid conflict
+#ifdef pi
+#undef pi
+#endif
+
 #include "rtweekend.h"
 #include "hittable_list.h"
 #include "sphere.h"
@@ -190,9 +198,12 @@ public:
                 float b = sqrt(output[idx + 2]);
 
                 // Clamp and convert to 0-255
-                int ir = int(256 * std::clamp(r, 0.0f, 0.999f));
-                int ig = int(256 * std::clamp(g, 0.0f, 0.999f));
-                int ib = int(256 * std::clamp(b, 0.0f, 0.999f));
+                r = (r < 0.0f) ? 0.0f : (r > 0.999f) ? 0.999f : r;
+                g = (g < 0.0f) ? 0.0f : (g > 0.999f) ? 0.999f : g;
+                b = (b < 0.0f) ? 0.0f : (b > 0.999f) ? 0.999f : b;
+                int ir = int(256 * r);
+                int ig = int(256 * g);
+                int ib = int(256 * b);
 
                 std::cout << ir << ' ' << ig << ' ' << ib << '\n';
             }
