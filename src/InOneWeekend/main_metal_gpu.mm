@@ -304,9 +304,9 @@ int main() {
     [encoder setBuffer:outputBuffer offset:0 atIndex:5];
 
     MTLSize gridSize = MTLSizeMake(image_width, image_height, 1);
-    NSUInteger w = pipeline.threadExecutionWidth;
-    NSUInteger h = pipeline.maxTotalThreadsPerThreadgroup / w;
-    MTLSize threadgroupSize = MTLSizeMake(w, h, 1);
+    NSUInteger thread_w = pipeline.threadExecutionWidth;
+    NSUInteger thread_h = pipeline.maxTotalThreadsPerThreadgroup / thread_w;
+    MTLSize threadgroupSize = MTLSizeMake(thread_w, thread_h, 1);
 
     [encoder dispatchThreads:gridSize threadsPerThreadgroup:threadgroupSize];
     [encoder endEncoding];
